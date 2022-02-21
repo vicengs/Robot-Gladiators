@@ -1,6 +1,15 @@
 // Variables
+var getPlayerName = function(){
+    var playerName = null;
+    playerName = window.prompt("What is your robot's name?").replace(/ /g, "");
+    
+    while(playerName === null || playerName === ""){
+        playerName = window.prompt("Please type a valid robot's name?").replace(/ /g, "");
+    }
+    return playerName;
+};
 var playerInfo = {
-    name: window.prompt("What is your robot's name?"),
+    name: getPlayerName(),
     health: 100,
     attack: 10,
     money: 20,
