@@ -40,30 +40,51 @@ var fight = function(enemyName, lastEnemy) {
         // Fight or not Fight that is the question
         promptFight = promptFight.toUpperCase();
         if (promptFight === "FIGHT"){
-            numRound = numRound + 1;
-            // Subtract the value of `playerInfo.attack` from the value of `enemyHealth` and use that result to update the value in the `enemyHealth` variable
-            enemyHealth = Math.max(0, enemyHealth - (randomValue(playerInfo.attack-3, playerInfo.attack)));
-           // Log a resulting message to the console so we know that it worked.
-           //console.log(playerInfo.name + " Attacked " + enemyName + " and now " + enemyName + " has " + enemyHealth + " health remaining.");
-           // Condition to check enemy health
-            if (enemyHealth <= 0){
-                window.alert(enemyName + " has died!");
-                window.alert(playerInfo.name + " wins and has " + playerInfo.health + " health");
-                playerInfo.money = playerInfo.money + 20;
-                break;
-            }else{
-               window.alert(enemyName + " still has " + enemyHealth + " health left.");
+            var isPlayerTurn = true;
+            if (Math.random() > 0.5){
+                isPlayerTurn = false;
             }
-            // Subtract the value of `enemyAttack` from the value of `playerInfo.health` and use that result to update the value in the `playerInfo.health` variable.
-            playerInfo.health = Math.max(0, playerInfo.health - (randomValue(enemyAttack-3, enemyAttack)));
-            // Log a resulting message to the console so we know that it worked.
-            //console.log(enemyName + " Attacked " + playerInfo.name + " and now " + playerInfo.name + " has " + playerInfo.health + " health remaining.");
-            // Condition to check player health
-            if (playerInfo.health <= 0){
-                window.alert(playerInfo.name + " has died!");
-                break;
+            numRound = numRound + 1;
+            var playerTurn = function(){
+                // Subtract the value of `playerInfo.attack` from the value of `enemyHealth` and use that result to update the value in the `enemyHealth` variable
+                enemyHealth = Math.max(0, enemyHealth - (randomValue(playerInfo.attack-3, playerInfo.attack)));
+                // Log a resulting message to the console so we know that it worked.
+                //console.log(playerInfo.name + " Attacked " + enemyName + " and now " + enemyName + " has " + enemyHealth + " health remaining.");
+                // Condition to check enemy health
+                if (enemyHealth <= 0){
+                    window.alert(enemyName + " has died!");
+                    window.alert(playerInfo.name + " wins and has " + playerInfo.health + " health");
+                    playerInfo.money = playerInfo.money + 20;
+                    return true;
+                    //break;
+                }else{
+                window.alert(enemyName + " still has " + enemyHealth + " health left.");
+                }
+            }
+            var enemyTurn = function(){
+                // Subtract the value of `enemyAttack` from the value of `playerInfo.health` and use that result to update the value in the `playerInfo.health` variable.
+                playerInfo.health = Math.max(0, playerInfo.health - (randomValue(enemyAttack-3, enemyAttack)));
+                // Log a resulting message to the console so we know that it worked.
+                //console.log(enemyName + " Attacked " + playerInfo.name + " and now " + playerInfo.name + " has " + playerInfo.health + " health remaining.");
+                // Condition to check player health
+                if (playerInfo.health <= 0){
+                    window.alert(playerInfo.name + " has died!");
+                    return true;
+                    //break;
+                }else{
+                    window.alert(playerInfo.name + " still has " + playerInfo.health + " health left.");
+                }
+            }
+            if (isPlayerTurn){
+                if (playerTurn()){
+                    break;
+                }
+                enemyTurn();
             }else{
-                window.alert(playerInfo.name + " still has " + playerInfo.health + " health left.");
+                if (enemyTurn()){
+                    break;
+                }
+                playerTurn();
             }
         }else if (promptFight === "SKIP"){
             var confirmSkip = window.confirm("Are you sure you'd like to quit?");
@@ -93,18 +114,18 @@ var endGame = function(){
     window.alert("Thank you for playing Robot Gladiators! Come back soon!");
 }
 var shop = function(){
-    var shopOption = window.prompt("Welcome to the shop. Would you like REFILL your health, UPGRADE your attack or LEAVE the store? Please enter one: 'REFILL', 'UPGRADE', or 'LEAVE' to make a choice.");
-    shopOption = shopOption.toUpperCase();
+    var shopOption = window.prompt("Welcome to the shop. Would you like REFILL (type 1) your health, UPGRADE (type 2) your attack or LEAVE (type 3) the store? Please enter a number to make your choose.");
+    shopOption = parseInt(shopOption);
     switch (shopOption){
-        case "REFILL":
+        case 1:
             window.alert("Refilling player's health by 20 for 7 dollars.");
             playerInfo.refill();
             break;
-        case "UPGRADE":
+        case 2:
             window.alert("Upgrading player's attack by 6 for 7 dollars.");
             playerInfo.upgrade();
             break;
-        case "LEAVE":
+        case 3:
             window.alert("Leaving the store.");
             break;
         default:
