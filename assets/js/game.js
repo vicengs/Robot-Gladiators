@@ -40,9 +40,10 @@ var fight = function(enemyName, lastEnemy) {
         // Fight or not Fight that is the question
         promptFight = promptFight.toUpperCase();
         if (promptFight === "FIGHT"){
-            var isPlayerTurn = true;
+            var rivalDefeated = false;
+            var isPlayerTurn  = false;
             if (Math.random() > 0.5){
-                isPlayerTurn = false;
+                isPlayerTurn = true;
             }
             numRound = numRound + 1;
             var playerTurn = function(){
@@ -55,7 +56,7 @@ var fight = function(enemyName, lastEnemy) {
                     window.alert(enemyName + " has died!");
                     window.alert(playerInfo.name + " wins and has " + playerInfo.health + " health");
                     playerInfo.money = playerInfo.money + 20;
-                    return true;
+                    rivalDefeated = true;
                     //break;
                 }else{
                 window.alert(enemyName + " still has " + enemyHealth + " health left.");
@@ -69,19 +70,21 @@ var fight = function(enemyName, lastEnemy) {
                 // Condition to check player health
                 if (playerInfo.health <= 0){
                     window.alert(playerInfo.name + " has died!");
-                    return true;
+                    rivalDefeated = true;
                     //break;
                 }else{
                     window.alert(playerInfo.name + " still has " + playerInfo.health + " health left.");
                 }
             }
             if (isPlayerTurn){
-                if (playerTurn()){
+                playerTurn();
+                if (rivalDefeated){
                     break;
                 }
                 enemyTurn();
             }else{
-                if (enemyTurn()){
+                enemyTurn();
+                if (rivalDefeated){
                     break;
                 }
                 playerTurn();
@@ -111,7 +114,25 @@ var fight = function(enemyName, lastEnemy) {
     }
 };
 var endGame = function(){
-    window.alert("Thank you for playing Robot Gladiators! Come back soon!");
+    var highScore = localStorage.getItem("highscore");
+    if (highScore === null){
+        highScore = 0;
+    }
+    console.log("Score -> " + highScore);
+    if (playerInfo.money > highScore){
+        localStorage.setItem("highscore",playerInfo.money);
+        localStorage.setItem("name",playerInfo.name);
+        window.alert(playerInfo.name + " now has the high score of " + playerInfo.money + " !");
+    }else{
+        window.alert(playerInfo.name + " did not beat the high score of " + highScore + ". Maybe next time!");
+    }
+    window.alert("Game Over");
+    var reStartConfirm = window.confirm("Would you like to play again?");
+    if (reStartConfirm){
+        startGame();
+    }else{
+        window.alert("Thank you for playing Robot Gladiators! Come back soon!");
+    }
 }
 var shop = function(){
     var shopOption = window.prompt("Welcome to the shop. Would you like REFILL (type 1) your health, UPGRADE (type 2) your attack or LEAVE (type 3) the store? Please enter a number to make your choose.");
@@ -168,12 +189,6 @@ var startGame = function(){
         enemyAttack  = randomValue(10,15);
         fight(pickedEnemyName, lastPickedEnemy);
     }
-    window.alert("Game Over");
-    var reStartConfirm = window.confirm("Would you like to play again?");
-    if (reStartConfirm){
-        startGame();
-    }else{
-        endGame();
-    }
 }
 startGame();
+endGame();
